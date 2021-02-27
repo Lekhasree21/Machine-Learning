@@ -1,0 +1,53 @@
+### SMOTE
+
+sm = SMOTE(random_state = 101)
+x_bal, y_bal = sm.fit_sample(x_train.astype('float'), y_train.ravel())
+
+print('After smote x shape : {}'.format(x_bal.shape)) 
+print('After smote y shape: {} \n'.format(y_bal.shape)) 
+
+from collections import Counter
+print('Before SMOTE:', Counter(y_train))
+print('After SMOTE:', Counter(y_bal))
+
+model_eval(x_bal, x_test, y_bal, y_test, XGBClassifier)
+model_eval(x_bal, x_test, y_bal, y_test, RandomForestClassifier)
+model_eval(x_bal, x_test, y_bal, y_test, GradientBoostingClassifier)
+model_eval(x_bal, x_test, y_bal, y_test, DecisionTreeClassifier)
+model_eval(x_bal, x_test, y_bal, y_test, LogisticRegression)
+
+### NearMiss
+
+from imblearn.under_sampling import NearMiss 
+
+nm = NearMiss()   
+x_miss, y_miss = nm.fit_sample(x_train, y_train) 
+  
+print('After sampling x shape : {}'.format(x_miss.shape)) 
+print('After sampling y shape: {} \n'.format(y_miss.shape)) 
+print('Before NearMiss:', Counter(y_train))
+print('After NearMiss:', Counter(y_miss))
+
+model_eval(x_miss, x_test, y_miss, y_test, XGBClassifier)
+model_eval(x_miss, x_test, y_miss, y_test, RandomForestClassifier)
+model_eval(x_miss, x_test, y_miss, y_test, GradientBoostingClassifier)
+model_eval(x_miss, x_test, y_miss, y_test, DecisionTreeClassifier)
+model_eval(x_miss, x_test, y_miss, y_test, LogisticRegression)
+
+### OverSampling
+
+oversample = RandomOverSampler(random_state=101)
+x_over, y_over = oversample.fit_resample(x_train, y_train)
+
+print('After sampling x shape : {}'.format(x_over.shape)) 
+print('After sampling y shape: {} \n'.format(y_over.shape)) 
+
+print('Before SMOTE:', Counter(y_train))
+print('After SMOTE:', Counter(y_over))
+
+model_eval(x_over, x_test, y_over, y_test, XGBClassifier)
+model_eval(x_over, x_test, y_over, y_test, RandomForestClassifier)
+model_eval(x_over, x_test, y_over, y_test, GradientBoostingClassifier)
+model_eval(x_over, x_test, y_over, y_test, DecisionTreeClassifier)
+model_eval(x_over, x_test, y_over, y_test, LogisticRegression)
+
