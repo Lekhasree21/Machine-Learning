@@ -1,2 +1,4 @@
-# Machine-Learning
-Prediction of Readmission at Hospitals using Logistic Regression, Decision Trees, Random Forest, Gradient Boosting and Extreme Gradient Boosting Algorithms
+# Prediction of Readmission at Hospitals using Logistic Regression, Decision Trees, Random Forest, Gradient Boosting and Extreme Gradient Boosting Algorithms
+This project aims to predict the readmissions at hospitals by analyzing the diabetes data factors that related to readmission classes using sklearn, machine learning libraries. Performed data preparation steps including missing values check, data cleaning, label encoder, feature scaling - standardization. Moreover, utilized the algorithms such as logistic regression, decision trees, random forest, gradient boosting and extreme gradient boosting to find the best techniques by applying class imbalance such as SMOTE, Random Oversampling, NearMiss and feature selection namely SelectFromModel, Recursive Feature Elimination Cross-Validated, Recursive Feature Elimination. Furthermore, the comparisons have been performed on different algorithms to know the metrics in a better way. Algorithms and techniques have been applied using python and machine learning repositories. Also, performed visualizations for better understanding.
+
+
