@@ -4,6 +4,13 @@ This project aims to predict the readmissions at hospitals by analyzing the diab
 
 The Centers for Medicare and Medicaid Services (CMS) is the U.S agency which has initiated numerous programs to ameliorate the patient’s health. One of the programs is Hospital Readmission Reduction Program (HRRP), a value-based purchase program that motivates the hospitals to enhance the care and communication between caregivers and patients to lessen the needless readmissions. Unfortunately, most of the patients who are readmitted and hospitalized have diabetes. Hence, the aim is to predict the readmissions of patients having diabetes so that it could be helpful in reducing the readmission rates. Unfortunately, it will not be effective to analyse the whole data by the humans to predict the values after understanding the relation between readmission and other features. Hence, here comes the use of machine learning. Machine learning helps to predict the values based on the historical data. For this data, predictive modeling can be applied which helps in prioritizing the patients according to the diagnosis and severity. 
 
+### Data Preparation
+- Missng values
+- Data Cleaning
+- Dealing with the target variable
+- Label Encoder
+- Feature Scaling: Standardization
+
 ### Class Imbalance Techniques and Cross Validation
 - SMOTE
 - Random Over-Sampling
