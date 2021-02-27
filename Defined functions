@@ -1,0 +1,130 @@
+# Model Evaluation
+def model_eval(x_train_f, x_test_f, y_train_f,y_test_f, model_e, model_name, fs_t, ci_t):
+    model_f = model_e() 
+    model_f.fit(x_train_f, y_train_f.ravel()) 
+    predictions_f = model_f.predict(x_test_f) 
+    neval_prob = [0 for _ in range(len(y_test_f))]
+    # evaluations
+    acc_f = accuracy_score(y_test_f, predictions_f)
+    pr_f = precision_score(y_test_f, predictions_f)
+    re_f = recall_score(y_test_f, predictions_f)
+    f1_f = f1_score(y_test_f, predictions_f)
+    confusion_matrx = confusion_matrix(y_test_f,predictions_f)
+    true_neg = confusion_matrx[0,0]
+    true_pos = confusion_matrx[1,1]
+    false_neg = confusion_matrx[1,0]
+    false_pos = confusion_matrx[0,1]
+    skf = StratifiedKFold(n_splits = 10)
+    cross_val = cross_val_score(model_f, x_train_f, y_train_f.ravel(), cv=skf)
+    cks = cohen_kappa_score(y_test_f,predictions_f)
+    average_precision = average_precision_score(y_test_f, model_f.predict_proba(x_test_f)[:,1])
+    print('-------------Performance measures------------')
+    print('True positive - ',true_pos)
+    print('True negative - ',true_neg)
+    print('False positive - ',false_pos)
+    print('False negative - ',false_neg)
+    print('True values - ', true_pos + true_neg)
+    print('False values - ', false_pos + false_neg)
+    print('classification report: \n',classification_report(y_test_f, predictions_f)) 
+    print('crosstab: \n',pd.crosstab(y_test_f,predictions_f))
+    plt.rcParams.update({'font.size': 24})
+    plot_confusion_matrix(model_f, x_test_f, y_test_f, cmap = "GnBu", values_format = '')
+    #fig = plt.figure(figsize=(4,4))
+    #plt.title(label = f"{model_name} \n {fs_t} using {ci_t} \n \n \n", fontsize=14)
+    plt.show()
+    print('-------------Cross Validation------------')
+    print('cross validation scores',cross_val)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (cross_val.mean(), cross_val.std() * 2))
+    print("Accuracy: %.2f%%" % (acc_f * 100.0))
+    print("Precision: %.2f%%" % (pr_f * 100.0))
+    print("Recall: %.2f%%" % (re_f * 100.0))
+    print("F1: %.2f%%" % (f1_f * 100.0))
+    print("cohen kappa score: " , cks )
+    print("average precision score : ", average_precision)
+    return confusion_matrx
+    
+def roc_curves(x_test_roc, y_test_roc, x_smote, y_smote,x_nearmiss, y_nearmiss,x_oversamp, y_oversamp, model_roc, model_name):
+    
+    fig = plt.figure(figsize=(10,5))
+    figure, ax = plt.subplots(nrows=1, ncols=2)
+    figure.suptitle(f"{model_name} \n \n")
+    plt.rcParams.update({'font.size': 12})
+    
+    ax1 = fig.add_subplot(1,2,1)
+    ax1.set_xlim([-0.05,1.05])
+    ax1.set_ylim([-0.05,1.05])
+    ax1.set_xlabel('Recall')
+    ax1.set_ylabel('Precision')
+    ax1.set_title('PR Curve')
+    
+    ax2 = fig.add_subplot(1,2,2)
+    ax2.set_xlim([-0.05,1.05])
+    ax2.set_ylim([-0.05,1.05])
+    ax2.set_xlabel('False Positive Rate')
+    ax2.set_ylabel('True Positive Rate')
+    ax2.set_title('ROC Curve')
+    
+    noskill_prob = [0 for _ in range(len(y_test_roc))]
+
+    model_1 = model_roc()
+    model_1.fit(x_smote, y_smote)
+
+    model_2 = model_roc()
+    model_2.fit(x_nearmiss, y_nearmiss)
+
+    model_3 = model_roc()
+    model_3.fit(x_oversamp, y_oversamp)
+
+    # predictions
+    prob_smote = model_1.predict_proba(x_test_roc)
+    prob_nearmiss = model_2.predict_proba(x_test_roc)
+    prob_oversamp = model_3.predict_proba(x_test_roc)
+
+    prob_smote = prob_smote[:, 1]
+    prob_nearmiss = prob_nearmiss[:, 1]
+    prob_oversamp = prob_oversamp[:, 1]
+    
+    # PR
+    average_precision_smote = average_precision_score(y_test_roc, model_1.predict_proba(x_test_roc)[:,1])
+    average_precision_nearmiss = average_precision_score(y_test_roc, model_2.predict_proba(x_test_roc)[:,1])
+    average_precision_oversamp = average_precision_score(y_test_roc, model_3.predict_proba(x_test_roc)[:,1])
+    
+    print('SMOTE Average precision-recall score: %.3f' % (average_precision_smote))
+    print('NearMiss Average precision-recall score: %.3f' % (average_precision_nearmiss))
+    print('Over Sampling Average precision-recall score: %.3f' % (average_precision_oversamp))
+    
+    p_smote,r_smote,_ = precision_recall_curve(y_test_roc,prob_smote)
+    p_nearmiss,r_nearmiss,_ = precision_recall_curve(y_test_roc,prob_nearmiss)
+    p_oversamp,r_oversamp,_ = precision_recall_curve(y_test_roc,prob_oversamp)
+    
+    ax1.plot(r_smote,p_smote,label='SMOTE : %.3f' % (average_precision_smote))
+    ax1.plot(r_nearmiss,p_nearmiss,label='Near miss : %.3f' % (average_precision_nearmiss))
+    ax1.plot(r_oversamp,p_oversamp,label='Over sampling : %.3f' % (average_precision_oversamp))
+
+    auc_noskill = roc_auc_score(y_test_roc, noskill_prob)
+    auc_smote = roc_auc_score(y_test_roc, prob_smote)
+    auc_nearmiss = roc_auc_score(y_test_roc, prob_nearmiss)
+    auc_oversamp = roc_auc_score(y_test_roc, prob_oversamp)
+
+    print('No Skill: ROC AUC=%.3f' % (auc_noskill))
+    print('SMOTE: ROC AUC=%.3f' % (auc_smote))
+    print('NearMiss: ROC AUC=%.3f' % (auc_nearmiss))
+    print('Over Sampling: ROC AUC=%.3f' % (auc_oversamp))
+
+    fpr_noskill, tpr_noskill, _ = roc_curve(y_test_roc, noskill_prob)
+    fpr_smote, tpr_smote, _ = roc_curve(y_test_roc, prob_smote)
+    fpr_nearmiss, tpr_nearmiss, _ = roc_curve(y_test_roc, prob_nearmiss)
+    fpr_oversamp, tpr_oversamp, _ = roc_curve(y_test_roc, prob_oversamp)
+
+    ax2.plot(fpr_noskill, tpr_noskill, linestyle='--', label='No SKILL:AUC =%.3f' % (auc_noskill))
+    ax2.plot(fpr_oversamp, tpr_oversamp, marker='.', label='Over sampling:AUC =%.3f' % (auc_oversamp))
+    ax2.plot(fpr_smote, tpr_smote, marker='.', label='SMOTE:AUC =%.3f' % (auc_smote), linestyle=(0, (5, 2, 1, 2)), 
+             dash_capstyle='round')
+    ax2.plot(fpr_nearmiss, tpr_nearmiss, marker='.', label='NearMiss:AUC =%.3f' % (auc_nearmiss))
+    
+    ax1.legend(loc='lower right')
+    ax2.legend(loc='lower right')
+    plt.show()
+    return average_precision_smote, average_precision_nearmiss, average_precision_oversamp, au_smote, auc_neamirss, auc_oversamp
+    
+ 
