@@ -1,0 +1,11 @@
+object_cols = list(set(list(data.select_dtypes(['object']).columns)) - {'readmitted'})
+object_cols
+
+from sklearn.preprocessing import LabelEncoder
+
+enco = LabelEncoder()
+x.loc[:,['glipizide-metformin', 'tolazamide','A1Cresult', 'repaglinide', 'glipizide', 'pioglitazone', 'acarbose', 'chlorpropamide', 'tolbutamide', 'diag_3','glyburide-metformin', 'rosiglitazone', 'glimepiride-pioglitazone', 'acetohexamide', 'troglitazone', 'diag_2','insulin', 'diag_1', 'race', 'nateglinide', 'glimepiride', 'metformin', 'age', 'metformin-rosiglitazone', 'miglitol', 'change', 'diabetesMed', 'metformin-pioglitazone', 'gender', 'max_glu_serum', 'glyburide']] = \
+x.loc[:,['glipizide-metformin', 'tolazamide','A1Cresult', 'repaglinide', 'glipizide', 'pioglitazone', 'acarbose', 'chlorpropamide', 'tolbutamide', 'diag_3','glyburide-metformin', 'rosiglitazone', 'glimepiride-pioglitazone', 'acetohexamide', 'troglitazone', 'diag_2','insulin', 'diag_1', 'race', 'nateglinide', 'glimepiride', 'metformin', 'age', 'metformin-rosiglitazone', 'miglitol', 'change', 'diabetesMed', 'metformin-pioglitazone', 'gender', 'max_glu_serum', 'glyburide']].apply(enco.fit_transform)
+x.head()
+
+y.value_counts()
