@@ -1,0 +1,34 @@
+# RFECV - smote
+
+rfecv_smote = RFECV(estimator=XGBClassifier(), step=1 ,scoring='accuracy')   
+rfecv_smote = rfecv_smote.fit(x_bal, y_bal)
+
+print('Optimal number of features :', rfecv_smote.n_features_)
+print('Best features :', x_bal.columns[rfecv_smote.support_])
+
+x_train_rfecv_smote = rfecv_smote.transform(x_bal)
+x_test_rfecv_smote = rfecv_smote.transform(x_test)
+
+# RFECV - over sampling
+
+from sklearn.feature_selection import RFECV
+
+rfecv_over = RFECV(estimator=XGBClassifier(), step=1 ,scoring='accuracy')   
+rfecv_over = rfecv_over.fit(x_over, y_over)
+
+print('Optimal number of features :', rfecv_over.n_features_)
+print('Best features :', x_over.columns[rfecv_over.support_])
+
+x_train_rfecv_over = rfecv_over.transform(x_over)
+x_test_rfecv_over = rfecv_over.transform(x_test)
+
+# RFECV - Nearmiss
+
+rfecv_nearmiss = RFECV(estimator=XGBClassifier(), step=1 ,scoring='accuracy')   
+rfecv_nearmiss = rfecv_nearmiss.fit(x_miss, y_miss)
+
+print('Optimal number of features :', rfecv_nearmiss.n_features_)
+print('Best features :', x_miss.columns[rfecv_nearmiss.support_])
+
+x_train_rfecv_nearmiss = rfecv_nearmiss.transform(x_miss)
+x_test_rfecv_nearmiss = rfecv_nearmiss.transform(x_test)
