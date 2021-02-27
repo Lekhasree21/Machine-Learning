@@ -1,0 +1,47 @@
+data[data == '?'].count(axis=0)
+
+plt.figure(figsize=(14,5))
+plt.xticks(rotation = 90)
+plt.title('Missing values of each feature',color= 'maroon', fontsize=15)
+plt.plot(data[data == '?'].count(axis=0))
+#plt.gca().get_xticklabels()[2].set_color('red')
+plt.show()
+
+data = data.drop(['weight','payer_code','medical_specialty'], axis = 1)
+data = data.drop(['examide','citoglipton'], axis = 1)
+data = data.drop(data[(data.gender == 'Unknown/Invalid')].index)
+data = data.drop(data[(data.race == '?') | (data.diag_1 == '?') | (data.diag_2 == '?') | (data.diag_3 == '?')].index)
+
+# removing the data of death or hospice patients
+data = data[~data.discharge_disposition_id.isin([11,13,14,19,20,21])]
+data.shape
+
+# class value - readmitted
+readmitted = {'<30': 1,'>30': 0,'NO': 0}
+data['readmitted'] = [readmitted[i] for i in data['readmitted']] 
+
+data['readmitted'].value_counts()
+
+plt.figure(figsize=(10,7))
+   
+axs = sns.countplot('readmitted', data = data, palette='Set2')
+
+total_count = len(data['readmitted'])
+for pat in axs.patches:
+    percent = '{:.1f}%'.format(100 * pat.get_height()/total_count)
+    x = pat.get_x() + pat.get_width() / 2 - 0.05
+    y = pat.get_y() + pat.get_height()
+    axs.annotate(percent, (x, y), size = 12)
+    
+axs.set(title='Class Imbalance')
+plt.show()
+
+data['patient_nbr_cum'] = data.groupby('patient_nbr')['readmitted'].apply(lambda x: x.cumsum())
+data['patient_nbr_cum']
+
+del data['patient_nbr']
+
+data.dtypes
+
+x = data.drop('readmitted', axis =1)
+y = data['readmitted']
